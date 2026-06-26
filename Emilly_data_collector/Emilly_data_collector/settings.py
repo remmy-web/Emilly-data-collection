@@ -34,7 +34,7 @@ SECRET_KEY = env('SECRET_KEY')
 
 
 # Allow Render's domain and local testing
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.onrender.com']
+ALLOWED_HOSTS = []
 
 
 # Application definition
