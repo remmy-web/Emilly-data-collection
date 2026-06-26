@@ -208,7 +208,8 @@ const SurveyWizard = () => {
 
     try {
       await axios.post(
-        "http://127.0.0.1:8000/api/add/",
+        // "http://127.0.0.1:8000/api/add/",
+        "https://emilly-data-collection-2.onrender.com/api/add/",
         data
       );
 
