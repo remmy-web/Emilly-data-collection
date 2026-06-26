@@ -12,14 +12,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Environment setup
 env = environ.Env(
-    DEBUG=(bool, False)
+    # DEBUG=(bool, False)
 )
 
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # SECURITY SETTINGS
 SECRET_KEY = env('SECRET_KEY')
-DEBUG = env.bool('DEBUG', default=False)
+# DEBUG = env.bool('DEBUG', default=False)
+DEBUG=True
 
 ALLOWED_HOSTS = [
     'localhost',
