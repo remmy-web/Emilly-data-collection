@@ -34,7 +34,7 @@ SECRET_KEY = env('SECRET_KEY')
 
 
 # Allow Render's domain and local testing
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
