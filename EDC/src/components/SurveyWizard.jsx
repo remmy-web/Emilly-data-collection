@@ -200,7 +200,7 @@ const SurveyWizard = () => {
       "Are you sure you want to submit this survey?"
     );
 
-  if (!confirmed) return;
+    if (!confirmed) return;
 
     if (isSubmitting) return;
 
@@ -222,7 +222,39 @@ const SurveyWizard = () => {
       setIsSubmitting(false);
     }
   };
+  const [downloadingData, setDownloadingData]=useState(false)
+  const downloadData = async () => {
+      try {
+          setDownloadingData(true);
 
+          const response = await axios.get(
+              "http://127.0.0.1:8000/api/download_data/",
+              {
+                  responseType: "blob",
+              }
+          );
+
+          const url = window.URL.createObjectURL(
+              new Blob([response.data])
+          );
+
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = "Nakasero_Onion_Retail_Survey.xlsx";
+
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+
+          window.URL.revokeObjectURL(url);
+
+      } catch (error) {
+          console.error(error);
+          alert("Failed to download data.");
+      } finally {
+          setDownloadingData(false);
+      }
+  };
   if (submitted) {
     return (
       <div className="flex flex-col items-center justify-center p-20">
@@ -238,44 +270,106 @@ const SurveyWizard = () => {
 
   return (
     <FormProvider {...methods}>
-      <div
-        style={{
-          maxWidth: "900px",
-          margin: "0 auto",
-          padding: "20px",
-          fontFamily: "Arial",
-        }}
-      >
-        <h1 style={{ textAlign: "center" }}>Nakasero Onion Retailers Survey</h1>
-        <p>
-          <strong>Emily Mwagale - Makerere University</strong>
-        </p>
+      <div className="max-w-5xl mx-auto px-4 py-4">
+          {/* Title */}
+          <div className="text-center mb-6">
+            <h1 className="text-xl sm:text-3xl font-bold text-gray-800">
+              Nakasero Onion Retailers Survey
+            </h1>
+            <button
+              onClick={downloadData}
+              disabled={downloadingData}
+              className={`px-4 py-2 rounded text-white font-semibold transition
+                  ${
+                      downloadingData
+                          ? "bg-gray-400 cursor-not-allowed"
+                          : "bg-blue-600 hover:bg-blue-700"
+                  }`}
+          >
+              {downloadingData ? "Downloading..." : "Download Data"}
+          </button>
 
-        {/* Progress Bar */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: "30px",
-          }}
-        >
-          {steps.map((step, index) => (
-            <div
-              key={step.id}
-              style={{
-                padding: "10px",
-                background: index <= currentStep ? "#28a745" : "#ddd",
-                color: index <= currentStep ? "white" : "black",
-                borderRadius: "5px",
-                flex: 1,
-                textAlign: "center",
-                margin: "0 5px",
-              }}
-            >
-              {step.title}
+            <p className="text-sm text-gray-500 mt-1">
+              Emily Mwagale • Makerere University
+            </p>
+          </div>
+
+          {/* Mobile Step Indicator */}
+          <div className="sm:hidden mb-6">
+
+            <div className="flex justify-between text-xs text-gray-500 mb-2">
+              <span>Step {currentStep + 1}</span>
+              <span>{steps.length} Steps</span>
             </div>
-          ))}
-        </div>
+
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div
+                className="bg-green-600 h-2 rounded-full transition-all duration-500"
+                style={{
+                  width: `${((currentStep + 1) / steps.length) * 100}%`,
+                }}
+              />
+            </div>
+
+            <p className="text-center mt-3 text-sm font-semibold text-green-700">
+              {steps[currentStep].title}
+            </p>
+
+          </div>
+
+          {/* Desktop Stepper */}
+          <div className="hidden sm:flex justify-between items-center mb-8">
+
+            {steps.map((step, index) => (
+
+              <React.Fragment key={step.id}>
+
+                <div className="flex flex-col items-center flex-1">
+
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all
+
+                    ${
+                      index <= currentStep
+                        ? "bg-green-600 text-white"
+                        : "bg-gray-300 text-gray-700"
+                    }`}
+                  >
+                    {step.id}
+                  </div>
+
+                  <p
+                    className={`mt-2 text-xs text-center
+
+                    ${
+                      index <= currentStep
+                        ? "text-green-700 font-semibold"
+                        : "text-gray-500"
+                    }`}
+                  >
+                    {step.title}
+                  </p>
+
+                </div>
+
+                {index < steps.length - 1 && (
+                  <div
+                    className={`h-1 flex-1 mx-2 rounded
+
+                    ${
+                      index < currentStep
+                        ? "bg-green-600"
+                        : "bg-gray-300"
+                    }`}
+                  />
+                )}
+
+              </React.Fragment>
+
+            ))}
+
+          </div>
+
 
         <form
           onSubmit={(e) => {
