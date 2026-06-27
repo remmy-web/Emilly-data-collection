@@ -228,7 +228,7 @@ const SurveyWizard = () => {
           setDownloadingData(true);
 
           const response = await axios.get(
-              "http://emilly-data-collection-2.onrender.com/api/download_data/",
+              "https://emilly-data-collection-2.onrender.com/api/download_data/",
               {
                   responseType: "blob",
               }
